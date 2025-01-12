@@ -102,6 +102,19 @@ if (isset($_POST['add'])) {
     // Xóa brand
     $idbrand = (int)$_GET['idbrand'];
 
+    // Kiểm tra xem brand có được tham chiếu trong bảng products không
+    $sql_check_products = "SELECT COUNT(*) AS product_count FROM products WHERE id_brand = $idbrand";
+    $result_check = mysqli_query($conn, $sql_check_products);
+    $row = mysqli_fetch_assoc($result_check);
+
+    if ($row['product_count'] > 0) {
+        // Brand đang được tham chiếu bởi bảng products
+        $_SESSION['error'] = "Cannot delete this brand because it is referenced in the products table!";
+        header("Location: ../../?action=brand&query=list");
+        exit;
+    }
+
+    // Nếu không bị tham chiếu, tiến hành xóa
     mysqli_begin_transaction($conn);
     try {
         $sql_delete_category_brand = "DELETE FROM category_brand WHERE brand_id = $idbrand";
@@ -120,10 +133,5 @@ if (isset($_POST['add'])) {
         header("Location: ../../?action=brand&query=list");
         exit;
     }
-} else {
-    // Request không hợp lệ
-    $_SESSION['error'] = "Invalid request.";
-    header("Location: ../../?action=brand&query=list");
-    exit;
 }
 ?>

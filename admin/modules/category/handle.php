@@ -66,16 +66,45 @@ if (isset($_POST['add'])) {
         exit;
     }
 } elseif (isset($_GET['delete']) && $id) {
-    // Xử lý xóa danh mục
-    $stmt = $conn->prepare("DELETE FROM category WHERE id = ?");
-    $stmt->bind_param("i", $id);
-    $stmt->execute();
-    $_SESSION['success'] = "Category deleted successfully!";
-    header('Location: ../../?action=category&query=list');
-    exit;
-} else {
-    $_SESSION['error'] = "Invalid request.";
-    header('Location: ../../?action=category&query=add'); // Quay lại trang add.php
-    exit;
+    mysqli_begin_transaction($conn); // Bắt đầu transaction
+    try {
+        // Kiểm tra xem category có được tham chiếu trong bảng products không
+        $stmt_check_products = $conn->prepare("SELECT COUNT(*) AS product_count FROM products WHERE id_category = ?");
+        $stmt_check_products->bind_param("i", $id);
+        $stmt_check_products->execute();
+        $result = $stmt_check_products->get_result();
+        $row = $result->fetch_assoc();
+
+        if ($row['product_count'] > 0) {
+            // Nếu có sản phẩm tham chiếu đến category, hiển thị lỗi
+            $_SESSION['error'] = "Cannot delete this category because it is referenced in the products table!";
+            header('Location: ../../?action=category&query=list'); // Quay lại trang danh sách
+            exit;
+        }
+
+        // Nếu không có tham chiếu, tiến hành xóa dữ liệu liên quan trong bảng category_brand
+        $stmt_delete_category_brand = $conn->prepare("DELETE FROM category_brand WHERE category_id = ?");
+        $stmt_delete_category_brand->bind_param("i", $id);
+        $stmt_delete_category_brand->execute();
+
+        // Xóa danh mục trong bảng category
+        $stmt_delete_category = $conn->prepare("DELETE FROM category WHERE id = ?");
+        $stmt_delete_category->bind_param("i", $id);
+        $stmt_delete_category->execute();
+
+        // Hoàn tất transaction
+        mysqli_commit($conn);
+
+        $_SESSION['success'] = "Category and related entries deleted successfully!";
+        header('Location: ../../?action=category&query=list'); // Điều hướng về trang danh sách
+        exit;
+    } catch (Exception $e) {
+        // Nếu xảy ra lỗi, rollback transaction
+        mysqli_rollback($conn);
+        $_SESSION['error'] = "Error occurred: " . $e->getMessage();
+        header('Location: ../../?action=category&query=list'); // Quay lại trang danh sách
+        exit;
+    }
 }
+
 ?>

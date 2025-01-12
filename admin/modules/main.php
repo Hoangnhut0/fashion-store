@@ -18,6 +18,12 @@
         include('modules/brand/add.php');
     }elseif($tmp == 'brand' && $query == 'edit'){
         include('modules/brand/edit.php');
+    }elseif($tmp == 'product' && $query == 'list'){
+        include('modules/product/list.php');
+    }elseif($tmp == 'product' && $query == 'add'){
+        include('modules/product/add.php');
+    }elseif($tmp == 'product' && $query == 'edit'){
+        include('modules/product/edit.php');
     }else{
         include('index.php');
     }

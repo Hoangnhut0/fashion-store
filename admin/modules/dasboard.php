@@ -93,8 +93,8 @@
                   </a>
                 </li>
                 <li class="menu-item">
-                  <a href="layouts-container.html" class="menu-link">
-                    <div data-i18n="Container">Container</div>
+                  <a href="?action=product&query=list" class="menu-link">
+                    <div data-i18n="Container">Product</div>
                   </a>
                 </li>
                 <li class="menu-item">
