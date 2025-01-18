@@ -11,7 +11,7 @@
                 unset($_SESSION['success']);
             }
 
-            // Fetch categories, brands, and sizes
+            // Fetch categories, brands and sizes
             $categoriesResult = mysqli_query($conn, "SELECT * FROM category");
             $brandsResult = mysqli_query($conn, "SELECT * FROM brands");
             $sizesResult = mysqli_query($conn, "SELECT * FROM sizes");
@@ -31,11 +31,23 @@
                             <input type="text" class="form-control" id="product-name" name="nameProduct" placeholder="Enter product name" required>
                         </div>
                         <div class="col-md-6">
-                            <label for="product-image" class="form-label">Product Image</label>
+                            <label for="product-image" class="form-label">Product Image (Main)</label>
                             <input type="file" class="form-control" id="product-image" name="image" required>
                         </div>
                     </div>
 
+                    <div class="row mb-3">
+                        <div class="col-md-12">
+                            <label for="product-images" class="form-label">Product Images (Additional)</label>
+                            <input type="file" class="form-control" id="product-images" name="images[]" multiple> <!-- multiple cho phép chọn nhiều ảnh -->
+                        </div>
+                    </div>
+                    <div class="row mb-3">
+                        <div class="col-md-12">
+                            <label for="product-images" class="form-label">Product Images (Additional)</label>
+                            <input type="file" class="form-control" id="product-images" name="images[]" multiple> <!-- multiple cho phép chọn nhiều ảnh -->
+                        </div>
+                    </div>
                     <div class="row mb-3">
                         <div class="col-md-6">
                             <label for="product-category" class="form-label">Category</label>

@@ -8,6 +8,8 @@ include('config/connect.php'); // Đảm bảo file này chứa kết nối tớ
 // Xử lý dữ liệu khi người dùng gửi biểu mẫu
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     // Lấy dữ liệu từ biểu mẫu
+    $firstname = trim($_POST['firstName']);
+    $lastname = trim($_POST['lastName']);
     $username = trim($_POST['username']);
     $email = trim($_POST['email']);
     $password = trim($_POST['password']);
@@ -24,8 +26,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $error = "Username or email already exists!";
     } else {
         // Thêm người dùng mới vào cơ sở dữ liệu
-        $stmt = $conn->prepare("INSERT INTO users (username, email, password, created_at) VALUES (?, ?, ?, NOW())");
-        $stmt->bind_param("sss", $username, $email, $hashed_password);
+        $stmt = $conn->prepare("INSERT INTO users (firstName, lastName, username, email, password, created_at) VALUES (?, ?, ?, ?, ?, NOW())");
+        $stmt->bind_param("sssss",$firstname, $lastname, $username, $email, $hashed_password);
 
         if ($stmt->execute()) {
             // Đăng ký thành công
@@ -166,6 +168,28 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
               <p class="mb-4">Make your app management easy and fun!</p>
 
               <form id="formAuthentication" class="mb-3" action="register.php" method="POST">
+                <div class="mb-3">
+                  <label for="firstName" class="form-label">First Name</label>
+                  <input
+                    type="text"
+                    class="form-control"
+                    id="firstName"
+                    name="firstName"
+                    placeholder="Enter your First Name"
+                    autofocus
+                  />
+                </div>
+                <div class="mb-3">
+                  <label for="lastName" class="form-label">Last Name</label>
+                  <input
+                    type="text"
+                    class="form-control"
+                    id="lastName"
+                    name="lastName"
+                    placeholder="Enter your Last Name"
+                    autofocus
+                  />
+                </div>
                 <div class="mb-3">
                   <label for="username" class="form-label">Username</label>
                   <input
